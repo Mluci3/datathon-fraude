@@ -1,0 +1,6 @@
+services:
+  chroma:
+    image: chromadb/chroma:0.4.24
+    container_name: chroma
+    ports:
+      - "8001:8000"
