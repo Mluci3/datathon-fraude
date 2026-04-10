@@ -1,0 +1,36 @@
+# dados — gerenciados pelo DVC, nunca pelo Git
+
+# segredos
+.env
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# jupyter
+.ipynb_checkpoints/
+
+# sistema
+.DS_Store
+
+# mlflow
+mlruns/
+mlartifacts/
+
+# modelos
+*.pkl
+*.joblib
+*.pt
+*.onnx
+.venv/
+data/raw/*.csv
+data/raw/*.parquet
+data/processed/*.csv
+data/processed/*.parquet
