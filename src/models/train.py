@@ -1,7 +1,4 @@
-"""
-Pipeline de treinamento com MLflow tracking padronizado.
-XGBoost (champion) e MLP PyTorch (challenger).
-"""
+"""Pipeline de treinamento atualizado — dataset enriquecido."""
 import logging
 import os
 
@@ -19,13 +16,15 @@ logger = logging.getLogger(__name__)
 
 MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5001")
 EXPERIMENT_NAME = "datathon-fraude"
+ID_COLS = ["transaction_id", "customer_id"]
 
 
 def train_xgboost(df: pd.DataFrame) -> str:
+    """Treina XGBoost e loga no MLflow."""
     mlflow.set_tracking_uri(MLFLOW_URI)
     mlflow.set_experiment(EXPERIMENT_NAME)
 
-    X = df.drop(columns=["is_fraud"])
+    X = df.drop(columns=ID_COLS + ["is_fraud"])
     y = df["is_fraud"]
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -41,19 +40,19 @@ def train_xgboost(df: pd.DataFrame) -> str:
         "eval_metric": "auc",
     }
 
-    with mlflow.start_run(run_name="xgboost-champion") as run:
+    with mlflow.start_run(run_name="xgboost-champion-v2") as run:
         mlflow.log_params(params)
         mlflow.log_param("n_features", X_train.shape[1])
         mlflow.log_param("n_samples_train", X_train.shape[0])
-        mlflow.log_param("test_size", 0.2)
-
+        mlflow.log_param("dataset_version", "enriched-v2")
         mlflow.set_tag("model_name", "xgboost-fraud-detector")
-        mlflow.set_tag("model_version", "1.0.0")
+        mlflow.set_tag("model_version", "2.0.0")
         mlflow.set_tag("model_type", "classification")
         mlflow.set_tag("owner", "datathon-6mlet")
         mlflow.set_tag("risk_level", "high")
         mlflow.set_tag("fairness_checked", "false")
         mlflow.set_tag("phase", "datathon-fase05")
+        mlflow.set_tag("dataset", "enriched-v2")
 
         model = XGBClassifier(**params)
         model.fit(X_train, y_train)
@@ -67,10 +66,8 @@ def train_xgboost(df: pd.DataFrame) -> str:
         }
         mlflow.log_metrics(metrics)
         mlflow.sklearn.log_model(model, "model")
-
-        logger.info("XGBoost treinado — AUC: %.4f | Recall: %.4f | F1: %.4f",
+        logger.info("XGBoost v2 — AUC: %.4f | Recall: %.4f | F1: %.4f",
                     metrics["auc"], metrics["recall"], metrics["f1"])
-
         return run.info.run_id
 
 
