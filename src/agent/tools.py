@@ -248,7 +248,8 @@ query_model_registry_tool = Tool(
         "Consulta o MLflow Model Registry para informações sobre modelos em produção. "
         "Use quando perguntarem sobre métricas do modelo, qual versão está em produção, "
         "AUC, recall, ou histórico de versões. "
-        "Input: nome do modelo (fraud-detector-champion ou fraud-detector-challenger)"
+        "Input: apenas o nome exato do modelo, sem texto adicional. "
+        "Exemplos de input válido: fraud-detector-champion | fraud-detector-challenger"
     ),
 )
 
