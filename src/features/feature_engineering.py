@@ -1,5 +1,5 @@
 """
-Feature engineering atualizado — inclui novos campos do dataset enriquecido.
+Feature engineering atualizado — schema moderno com device, IP e velocity temporal.
 """
 import logging
 
@@ -23,6 +23,10 @@ INPUT_SCHEMA = DataFrameSchema({
     "velocity_1h": Column(int, pa.Check.ge(0)),
     "velocity_24h": Column(int, pa.Check.ge(0)),
     "avg_amount_30d": Column(float, pa.Check.gt(0)),
+    "is_new_device": Column(int, pa.Check.isin([0, 1])),
+    "time_since_last_txn_min": Column(int, pa.Check.ge(0)),
+    "failed_txns_last_24h": Column(int, pa.Check.ge(0)),
+    "ip_risk_score": Column(float, pa.Check.in_range(0, 1)),
     "is_fraud": Column(int, pa.Check.isin([0, 1])),
 })
 
@@ -33,27 +37,39 @@ CATEGORY_MAP = {
 CHANNEL_MAP = {"presencial": 0, "online": 1, "app": 2}
 CARD_MAP = {"debito": 0, "credito": 1}
 
-# colunas de identificacao — preservadas para o agente
 ID_COLS = ["transaction_id", "customer_id"]
 
-# colunas que o modelo usa para treinar
 FEATURE_COLS = [
-    "amount", "distance_from_home", "velocity_1h", "velocity_24h",
-    "avg_amount_30d", "account_balance", "amount_ratio", "is_night",
-    "high_velocity", "is_online", "is_credit", "merchant_category_encoded",
+    "amount",
+    "distance_from_home",
+    "velocity_1h",
+    "velocity_24h",
+    "avg_amount_30d",
+    "account_balance",
+    "is_new_device",
+    "time_since_last_txn_min",
+    "failed_txns_last_24h",
+    "ip_risk_score",
+    "amount_ratio",
+    "is_night",
+    "high_velocity",
+    "is_online",
+    "is_credit",
+    "is_urgent",
+    "merchant_category_encoded",
     "is_fraud",
 ]
 
 
 def compute_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Aplica feature engineering nos dados brutos enriquecidos.
+    Aplica feature engineering nos dados brutos.
 
     Args:
         df: DataFrame com transações brutas.
 
     Returns:
-        DataFrame com features prontas — inclui transaction_id e customer_id.
+        DataFrame com features + IDs preservados.
     """
     logger.info("Validando schema de entrada...")
     INPUT_SCHEMA.validate(df)
@@ -61,7 +77,7 @@ def compute_features(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Calculando features...")
     result = df.copy()
 
-    # features derivadas
+    # features derivadas existentes
     result["amount_ratio"] = (result["amount"] / result["avg_amount_30d"]).round(4)
     result["is_night"] = result["hour"].apply(lambda h: 1 if h >= 22 or h <= 6 else 0)
     result["high_velocity"] = (result["velocity_1h"] > 3).astype(int)
@@ -69,11 +85,16 @@ def compute_features(df: pd.DataFrame) -> pd.DataFrame:
     result["is_credit"] = result["card_type"].map(CARD_MAP)
     result["merchant_category_encoded"] = result["merchant_category"].map(CATEGORY_MAP)
 
-    # preserva IDs + features do modelo
+    # nova feature — transação urgente: device novo + pouco tempo desde última
+    result["is_urgent"] = (
+        (result["is_new_device"] == 1) &
+        (result["time_since_last_txn_min"] < 30)
+    ).astype(int)
+
     final_cols = ID_COLS + FEATURE_COLS
     result = result[final_cols]
 
-    logger.info("Features calculadas: %d colunas, %d linhas.", len(result.columns), len(result))
+    logger.info("Features: %d colunas, %d linhas.", len(result.columns), len(result))
     return result
 
 
@@ -93,10 +114,7 @@ if __name__ == "__main__":
     save_features(features)
 
     print("\n--- Features Geradas ---")
-    print(f"Colunas: {list(features.columns)}")
     print(f"Shape: {features.shape}")
-    print(f"\nExemplo de transação fraudulenta:")
-    print(features[features["is_fraud"]==1].head(1).to_string())
     print(f"\nCorrelação com is_fraud:")
     numeric = features.drop(columns=ID_COLS)
     print(numeric.corr()["is_fraud"].sort_values(ascending=False).round(3))
