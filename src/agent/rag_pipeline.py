@@ -4,7 +4,6 @@ Corpus: transações históricas + regras de fraude + relatórios.
 """
 import logging
 import os
-import json
 
 import chromadb
 import pandas as pd

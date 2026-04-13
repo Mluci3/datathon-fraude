@@ -1,11 +1,16 @@
 """Testes da FastAPI."""
+import os
 import sys
 sys.path.insert(0, ".")
 
+import pytest
 from fastapi.testclient import TestClient
 from src.serving.app import app
 
 client = TestClient(app)
+
+MODEL_EXISTS = os.path.exists("models/champion_v3.joblib")
+DATA_EXISTS = os.path.exists("data/processed/features.csv")
 
 
 def test_health():
@@ -16,6 +21,10 @@ def test_health():
     assert "timestamp" in data
 
 
+@pytest.mark.skipif(
+    not (MODEL_EXISTS and DATA_EXISTS),
+    reason="modelo ou dados não disponíveis no ambiente CI"
+)
 def test_predict_valid():
     response = client.post(
         "/predict",
@@ -28,6 +37,10 @@ def test_predict_valid():
     assert data["prediction"] in ["FRAUDE", "LEGITIMA"]
 
 
+@pytest.mark.skipif(
+    not (MODEL_EXISTS and DATA_EXISTS),
+    reason="modelo ou dados não disponíveis no ambiente CI"
+)
 def test_predict_not_found():
     response = client.post(
         "/predict",

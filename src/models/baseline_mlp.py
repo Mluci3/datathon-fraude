@@ -105,7 +105,7 @@ def train_mlp(df: pd.DataFrame) -> str:
         # treino com BCEWithLogitsLoss + pos_weight
         model = FraudMLP(input_dim=X_train.shape[1])
         optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
-        criterion = nn.BCELoss(weight=None)
+        
 
         # aplica pos_weight manualmente via weighted loss
         def weighted_loss(output, target):

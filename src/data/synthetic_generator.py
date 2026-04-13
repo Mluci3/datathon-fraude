@@ -181,9 +181,9 @@ if __name__ == "__main__":
 
     print("\n--- Dataset Moderno ---")
     print(f"Colunas: {list(df.columns)}")
-    print(f"\nExemplo de fraude:")
+    print("\nExemplo de fraude:")
     print(df[df["is_fraud"] == 1].head(1).to_string())
-    print(f"\nComparação legítimo vs fraude:")
+    print("\nComparação legítimo vs fraude:")
     cols = ["is_new_device", "time_since_last_txn_min",
             "failed_txns_last_24h", "ip_risk_score", "distance_from_home"]
     print(df.groupby("is_fraud")[cols].mean().round(3))

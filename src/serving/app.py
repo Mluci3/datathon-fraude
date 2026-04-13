@@ -114,7 +114,9 @@ def predict(request: PredictRequest):
     Predição direta de fraude para uma transação.
     Não usa o agente — chama o modelo diretamente.
     """
-    import subprocess, json, sys
+    import json
+    import subprocess
+    import sys
 
     FEATURE_COLS = [
         "amount", "distance_from_home", "velocity_1h", "velocity_24h",
@@ -177,7 +179,6 @@ print(json.dumps({{"score": round(score, 4)}}))
 def list_models():
     """Lista modelos registrados no MLflow Model Registry."""
     import mlflow
-    import os
 
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5001"))
     client = mlflow.tracking.MlflowClient()

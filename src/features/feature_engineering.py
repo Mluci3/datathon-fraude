@@ -115,6 +115,6 @@ if __name__ == "__main__":
 
     print("\n--- Features Geradas ---")
     print(f"Shape: {features.shape}")
-    print(f"\nCorrelação com is_fraud:")
+    print("\nCorrelação com is_fraud:")
     numeric = features.drop(columns=ID_COLS)
     print(numeric.corr()["is_fraud"].sort_values(ascending=False).round(3))

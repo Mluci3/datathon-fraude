@@ -4,9 +4,8 @@ Tools do agente ReAct para o ML Copilot de fraude.
 """
 import logging
 import os
-import joblib
+
 import mlflow
-import pandas as pd
 from dotenv import load_dotenv
 from langchain.tools import Tool
 
@@ -52,7 +51,9 @@ def _get_rag():
 
 def _explain_prediction_fn(input_str: str) -> str:
     """Explica predição rodando em subprocess separado — evita segfault no M1."""
-    import subprocess, json, sys
+    import json
+    import subprocess
+    import sys
     try:
         transaction_id = input_str.strip()
 
@@ -215,7 +216,7 @@ def _query_transactions_fn(input_str: str) -> str:
                 )
 
         if rules:
-            output += f"\nRegras de fraude relevantes:\n"
+            output += "\nRegras de fraude relevantes:\n"
             for r in rules:
                 output += f"  [{r['relevance']:.2f}] {r['rule'][:120]}...\n"
 

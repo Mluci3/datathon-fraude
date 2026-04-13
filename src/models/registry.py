@@ -49,8 +49,8 @@ def register_models() -> None:
 
     print("\n=== Model Registry Atualizado ===")
     print(f"CHAMPION: fraud-detector-champion v{champion_mv.version}")
-    print(f"  Stage:   production")
-    print(f"  Dataset: enriched-v2")
+    print("  Stage:   production")
+    print("  Dataset: enriched-v2")
     print(f"  AUC:     {champion_run.data.metrics.get('auc', 0):.4f}")
     print(f"  Recall:  {champion_run.data.metrics.get('recall', 0):.4f}")
     print(f"  F1:      {champion_run.data.metrics.get('f1', 0):.4f}")
