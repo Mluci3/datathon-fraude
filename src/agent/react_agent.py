@@ -91,8 +91,10 @@ def create_agent() -> AgentExecutor:
         tools=TOOLS,
         verbose=True,
         max_iterations=4,
+        max_execution_time=30,
         handle_parsing_errors=True,
         callbacks=[langfuse_handler],
+        
     )
 
 

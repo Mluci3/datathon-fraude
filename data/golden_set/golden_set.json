@@ -1,0 +1,152 @@
+[
+  {
+    "query": "Qual modelo está em produção e quais são suas métricas?",
+    "expected_answer": "O modelo em produção é o fraud-detector-champion versão 3, algoritmo XGBoost, dataset enriched-v2. AUC 0.9997, Recall 1.0, F1 0.9877. Recall 1.0 indica detecção de todas as fraudes. F1 levemente abaixo de 1 indica alguns falsos positivos.",
+    "contexts": ["mlflow://fraud-detector-champion/3"],
+    "category": "model_registry"
+  },
+  {
+    "query": "Analise a transação TXN_009930 e me diga se é fraude.",
+    "expected_answer": "TXN_009930 score 1.0, predição FRAUDE, ação BLOQUEAR. Fatores de alto impacto: time_since_last_txn_min=10 (importância 0.9367). Moderado: ip_risk_score=0.904 (0.0417). Contextuais: velocity_24h=10, distance_from_home=70.2km. Padrão de card testing e account takeover.",
+    "contexts": ["data/raw/transactions.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Qual é a versão do modelo champion em produção e quais são suas métricas de desempenho?",
+    "expected_answer": "Versão 3 em produção, algoritmo XGBoost, dataset enriched-v2. AUC 0.9997, Recall 1.0, F1 0.9877. É a versão mais recente com melhores métricas.",
+    "contexts": ["mlflow://fraud-detector-champion/3"],
+    "category": "model_registry"
+  },
+  {
+    "query": "Quais são as métricas do modelo challenger?",
+    "expected_answer": "fraud-detector-challenger versão 1 em staging, algoritmo mlp-pytorch. AUC 0.9903, Recall 1.0. Recall perfeito mas pode gerar muitos falsos positivos.",
+    "contexts": ["mlflow://fraud-detector-challenger"],
+    "category": "model_registry"
+  },
+  {
+    "query": "Por que o XGBoost foi escolhido como champion em vez do MLP?",
+    "expected_answer": "XGBoost tem AUC 0.9997 e Recall 1.0 na versão 3, superior ao MLP. XGBoost demonstrou melhor capacidade de detecção de fraude, justificando sua escolha como champion.",
+    "contexts": ["mlflow://fraud-detector-champion", "mlflow://fraud-detector-challenger"],
+    "category": "model_registry"
+  },
+  {
+    "query": "Analise a transação TXN_000001 e diga se é suspeita.",
+    "expected_answer": "TXN_000001 score 0.0002, predição LEGITIMA, ação APROVAR. time_since_last_txn_min=27 (alto impacto, legítimo), ip_risk_score=0.138 (baixo risco), velocity_24h=3 (normal), distance_from_home=20.9km (contextual). Sem padrões de fraude.",
+    "contexts": ["data/raw/transactions.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Quais features mais influenciam a detecção de fraude?",
+    "expected_answer": "As features mais influentes são time_since_last_txn_min (importância 0.9367), ip_risk_score (0.0417), velocity_24h (0.0055), distance_from_home (0.0044). O modelo usa dataset enriched-v2 com AUC 0.9997.",
+    "contexts": ["data/processed/features.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Mostre casos de fraude com device novo no histórico.",
+    "expected_answer": "Casos similares com device novo encontrados. Device novo combinado com transações em categorias de alto risco é forte indicador de fraude. Padrões de account takeover e card testing identificados.",
+    "contexts": ["chroma://transactions", "chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "Existe algum padrão de fraude relacionado a transações na madrugada?",
+    "expected_answer": "Sim. Transações na madrugada com mais de 2 tentativas falhas nas últimas 24h e velocity acima de 3 por hora são padrões de fraude. Relacionados a card testing e account takeover.",
+    "contexts": ["chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "Mostre casos de fraude com device novo e IP de risco alto.",
+    "expected_answer": "Casos similares encontrados com device novo e IP de risco. Device novo com transação em menos de 30 minutos é forte indicador de fraude (85% dos casos). IPs de risco indicam proxies ou VPNs usados por fraudadores.",
+    "contexts": ["chroma://transactions", "chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "O que é card testing no contexto de fraude?",
+    "expected_answer": "Card testing é quando fraudadores testam validade de cartões clonados com transações pequenas e rápidas antes de realizar compras maiores. Velocity alto (mais de 3 por hora) é o principal indicador.",
+    "contexts": ["chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "O que significa recall 1.0 no modelo challenger?",
+    "expected_answer": "Recall 1.0 significa que o MLP detecta 100% das fraudes reais. Porém F1 baixo indica muitos falsos positivos — clientes legítimos bloqueados desnecessariamente.",
+    "contexts": ["mlflow://fraud-detector-challenger"],
+    "category": "model_registry"
+  },
+  {
+    "query": "Qual o AUC do modelo em produção?",
+    "expected_answer": "O fraud-detector-champion v3 tem AUC 0.9997, indicando capacidade quase perfeita de distinguir fraudes de transações legítimas.",
+    "contexts": ["mlflow://fraud-detector-champion/3"],
+    "category": "model_registry"
+  },
+  {
+    "query": "Como o ip_risk_score influencia a classificação de fraude?",
+    "expected_answer": "IP risk score acima de 0.7 indica origem suspeita — proxies, VPNs e redes TOR. Na TXN_009930 o score é 0.904, segundo fator de risco mais importante com importância 0.0417.",
+    "contexts": ["chroma://fraud_rules", "data/raw/transactions.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "O que é account takeover no contexto de fraude financeira?",
+    "expected_answer": "Account takeover é quando fraudador assume controle da conta usando credenciais roubadas. Sinais: device novo, transação rápida após acesso (time_since_last_txn_min baixo), IP suspeito.",
+    "contexts": ["chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "Qual a diferença entre card testing e account takeover?",
+    "expected_answer": "Card testing: cartões clonados testados com transações pequenas e rápidas (velocity alto). Account takeover: credenciais roubadas de cliente real (device novo + IP suspeito + transação rápida).",
+    "contexts": ["chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "Uma transação a 200km de casa é sempre fraude?",
+    "expected_answer": "Não. Distância é fator contextual — clientes em viagem fazem transações longe de casa. O modelo considera distância combinada com device novo, IP suspeito e velocity para decidir.",
+    "contexts": ["chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "Quantos modelos estão registrados no MLflow?",
+    "expected_answer": "Dois modelos: fraud-detector-champion (3 versões, XGBoost) em production e fraud-detector-challenger (1 versão, MLP PyTorch) em staging.",
+    "contexts": ["mlflow://models"],
+    "category": "model_registry"
+  },
+  {
+    "query": "O que significa score de fraude 1.0?",
+    "expected_answer": "Score 1.0 é certeza máxima de fraude. Threshold de decisão é 0.5 — acima disso é FRAUDE. Score 1.0 aciona ação BLOQUEAR imediatamente.",
+    "contexts": ["data/processed/features.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Como o modelo foi treinado?",
+    "expected_answer": "XGBoost com 300 estimadores, max_depth 6, scale_pos_weight ajustado para desbalanceamento (98% legítimo, 2% fraude). Dataset enriched-v2 com 10.000 transações sintéticas.",
+    "contexts": ["mlflow://fraud-detector-champion/3"],
+    "category": "model_registry"
+  },
+  {
+    "query": "O que é is_urgent e por que tem alta importância?",
+    "expected_answer": "is_urgent combina device novo com transação em menos de 30 minutos — padrão clássico de account takeover. Correlação 0.770 com fraude, a mais alta do dataset.",
+    "contexts": ["data/processed/features.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Qual ação tomar quando o score de fraude está entre 0.5 e 0.8?",
+    "expected_answer": "Score entre 0.5 e 0.8 indica risco moderado — ação REVISAR. Solicitar confirmação ao cliente antes de aprovar ou bloquear.",
+    "contexts": ["data/processed/features.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Mostre as regras de fraude mais relevantes para transações online.",
+    "expected_answer": "Canal online representa 50% das fraudes mas apenas 30% das transações legítimas. Combinado com madrugada e device novo, probabilidade de fraude superior a 90%.",
+    "contexts": ["chroma://fraud_rules"],
+    "category": "rag_search"
+  },
+  {
+    "query": "failed_txns_last_24h alto indica fraude?",
+    "expected_answer": "Sim. Mais de 2 tentativas falhas nas últimas 24h é padrão de ataque de força bruta em cartões. Na TXN_009930 há 1 tentativa falha combinada com outros fatores de risco.",
+    "contexts": ["chroma://fraud_rules", "data/raw/transactions.csv"],
+    "category": "explain_prediction"
+  },
+  {
+    "query": "Mostre casos de fraude com alto velocity nas últimas 24 horas.",
+    "expected_answer": "Velocity_24h alto é padrão de card testing. Fraudadores testam cartões clonados com transações rápidas antes de compras maiores. Velocity acima de 3 por hora é anormal.",
+    "contexts": ["chroma://transactions", "chroma://fraud_rules"],
+    "category": "rag_search"
+  }
+]
