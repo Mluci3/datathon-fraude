@@ -96,18 +96,24 @@ def evaluate_rag(golden_set_path: str = GOLDEN_SET_PATH) -> dict:
         AnswerCorrectness(llm=ragas_llm)
     ]
 
-    logger.info("Iniciando cálculo das métricas RAGAS com Gemini...")
-    result = evaluate(dataset=dataset, metrics=metrics)
+    logger.info("Cálculo concluído! Processando resultados...")
+    
+    # Transformamos em DataFrame para facilitar a extração das médias
+    df_results = result.to_pandas()
+    
+    # Salvamos o detalhado também, vai ser ótimo para o seu relatório!
+    df_results.to_csv("evaluation/ragas_detailed_results.csv", index=False)
 
-    # Arrumando os scores para o dicionário final
+    # Arrumando os scores pegando a média de cada coluna
     scores = {
-        "faithfulness": round(float(result["faithfulness"]), 4),
-        "answer_relevancy": round(float(result["answer_relevancy"]), 4),
-        "context_precision": round(float(result["context_precision"]), 4),
-        "answer_correctness": round(float(result["answer_correctness"]), 4),
+        "faithfulness": round(df_results["faithfulness"].mean(), 4),
+        "answer_relevancy": round(df_results["answer_relevancy"].mean(), 4),
+        "context_precision": round(df_results["context_precision"].mean(), 4),
+        "answer_correctness": round(df_results["answer_correctness"].mean(), 4),
         "n_samples": len(samples),
     }
-    logger.info("Scores Finais: %s", scores)
+    
+    logger.info("Scores Médios Finais: %s", scores)
     return scores
 
 if __name__ == "__main__":
