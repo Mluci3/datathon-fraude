@@ -16,48 +16,30 @@ dependencies = [
     "scikit-learn>=1.4.0",
     "xgboost>=2.0.0",
     "torch>=2.2.0",
-    "shap>=0.44.0",
+    "shap>=0.45.1", # Atualizado para melhor estabilidade no M1
 
     # mlflow
     "mlflow>=2.10.0",
 
-    # llm e agente
-    "langchain>=0.1.0",
-    "langchain-community>=0.0.20",
-    "langchain-groq>=0.1.0",
-    "chromadb>=0.4.0",
-    "sentence-transformers>=2.5.0",
+    # llm e agente - ATUALIZADOS PARA LANGCHAIN 0.3 + GEMINI
+    "langchain>=0.3.0",
+    "langchain-community>=0.3.0",
+    "langchain-core>=0.3.0",
+    "langchain-google-genai>=2.0.0", # Essencial para o Gemini 2.0
+    "langchain-groq>=0.2.0",
+    "chromadb>=0.5.0", # Versão mais estável para o Docker que você está usando
+    "sentence-transformers>=3.0.0",
 
     # api
     "fastapi>=0.110.0",
     "uvicorn>=0.27.0",
 
-    # observabilidade
+    # observabilidade e avaliação
     "evidently>=0.4.0",
     "langfuse>=2.0.0",
+    "ragas>=0.2.15", # Adicionado aqui já que você vai rodar na Etapa 3
 
-    # segurança
+    # utilitários
     "python-dotenv>=1.0.0",
+    "joblib>=1.3.0",
 ]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0.0",
-    "pytest-cov>=4.1.0",
-    "ruff>=0.3.0",
-    "mypy>=1.8.0",
-    "bandit>=1.7.0",
-    "httpx>=0.27.0",
-]
-
-[tool.ruff]
-line-length = 150
-select = ["E", "F", "I"]
-ignore = ["E501"]
-
-[tool.mypy]
-python_version = "3.11"
-ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]

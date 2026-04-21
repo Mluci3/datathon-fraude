@@ -258,9 +258,10 @@ query_transactions_tool = Tool(
     name="query_transactions_tool",
     func=_query_transactions_fn,
     description=(
-        "Busca transações similares no histórico usando RAG semântico. "
-        "Use quando o analista quiser ver casos parecidos ou precedentes históricos. "
-        "Input: descrição do padrão ou características da transação"
+        "Busca conhecimento geral no banco vetorial (RAG). "
+        "Use para responder perguntas sobre o modelo como um todo, quais as features mais importantes, "
+        "regras de negócio, precedentes históricos ou conceitos (ex: 'o que é card testing', 'padrões da madrugada'). "
+        "Input: a própria pergunta ou conceito que o analista quer saber."
     ),
 )
 
