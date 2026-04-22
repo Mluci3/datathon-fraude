@@ -1,7 +1,8 @@
 {
-  "faithfulness": 0.2627,
-  "answer_relevancy": NaN,
-  "context_precision": 0.8333,
-  "answer_correctness": NaN,
-  "n_samples": 21
+  "faithfulness": 0.767,
+  "answer_relevancy": 0.7108,
+  "context_precision": 0.8182,
+  "answer_correctness": 0.6509,
+  "n_samples": 22,
+  "n_skipped": 3
 }

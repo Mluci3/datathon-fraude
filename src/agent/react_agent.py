@@ -74,8 +74,8 @@ def create_agent() -> AgentExecutor:
         agent=agent,
         tools=TOOLS,
         verbose=True,
-        max_iterations=6,
-        max_execution_time=60,
+        max_iterations=10,
+        max_execution_time=120,
         handle_parsing_errors=True,
         callbacks=[CallbackHandler()],
         
