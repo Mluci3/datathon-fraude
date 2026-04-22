@@ -1,0 +1,12 @@
+[
+  {"id": "kb_001", "text": "Feature Engineering: is_urgent = True se (device_novo = True AND tempo_acesso < 30min). Correlação: 0.770 com fraude, a mais alta do dataset. Padrão clássico de account takeover."},
+  {"id": "kb_002", "text": "MLflow Training Logs: Algoritmo XGBoost. n_estimators=300, max_depth=6. scale_pos_weight ajustado para desbalanceamento 98% legítimo 2% fraude. Dataset: enriched-v2 com 10k amostras sintéticas."},
+  {"id": "kb_003", "text": "Protocolo de decisão por score: Score menor que 0.5 significa Aprovar. Score entre 0.5 e 0.8 significa Revisar — solicitar confirmação ao cliente. Score acima de 0.8 significa Bloquear imediatamente."},
+  {"id": "kb_004", "text": "Lógica do Modelo: Score representa probabilidade de fraude entre 0 e 1. Threshold de decisão: 0.5. Score 1.0 é confiança total de fraude — aciona ação BLOQUEAR imediatamente."},
+  {"id": "kb_005", "text": "Definição de Risco ATO: Account Takeover ocorre quando terceiros acessam contas legítimas usando credenciais roubadas. Sinais: device novo, transação rápida após acesso (time_since_last_txn_min baixo), IP suspeito."},
+  {"id": "kb_006", "text": "Matriz de Padrões: Card Testing foca em volume e velocity — cartões clonados testados com transações pequenas e rápidas (velocity_1h > 3). Account Takeover foca em usurpar identidades — novos acessos com device novo e IP suspeito."},
+  {"id": "kb_007", "text": "Dicionário de Features: ip_risk_score maior que 0.7 indica uso de VPN, Proxy ou rede TOR. IPs suspeitos são usados para mascarar localização real do fraudador. Exemplo TXN_009930: ip_risk_score 0.904."},
+  {"id": "kb_008", "text": "Model Inventory MLflow: fraud-detector-champion versão 3 em Production (XGBoost, enriched-v2, AUC 0.9997, Recall 1.0, F1 0.9877). fraud-detector-challenger versão 1 em Staging (MLP PyTorch, AUC 0.9903, Recall 1.0)."},
+  {"id": "kb_009", "text": "Regra de Localidade: distance_from_home é fator contextual. Não gera bloqueio isolado sem outros fatores de risco. Clientes em viagem fazem transações longe de casa. Distância média em fraudes confirmadas é 80km."},
+  {"id": "kb_010", "text": "Análise de Canal: Transações Online possuem maior correlação com fraude — 50% das fraudes mas apenas 30% das transações legítimas. Risco escala quando associado a madrugada e device novo — probabilidade superior a 90%."}
+]

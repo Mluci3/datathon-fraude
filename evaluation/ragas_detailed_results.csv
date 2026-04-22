@@ -1,0 +1,165 @@
+user_input,retrieved_contexts,response,reference,faithfulness,answer_relevancy,context_precision,answer_correctness
+Analise a transação TXN_009930 e me diga se é fraude.,"['Dados da Transação TXN_009930: Score 1.0, Predição: FRAUDE. Fatores: time_since_last_txn_min=10, ip_risk_score=0.904, velocity_24h=10, distance_from_home=70.2. Classificação: Risco Crítico.']","**Resumo Executivo:**
+*   **Score de Fraude:** 1.0
+*   **Classificação:** FRAUDE
+*   **Ação Sugerida:** BLOQUEAR
+
+**Detalhamento Técnico:**
+*   **Alto Impacto (imp > 0.1):**
+    *   `time_since_last_txn_min`: importância 0.9367 | valor: 10
+*   **Moderado (imp 0.01 a 0.1):**
+    *   `ip_risk_score`: importância 0.0417 | valor: 0.904
+    *   `velocity_24h`: importância 0.0055 | valor: 10
+    *   `distance_from_home`: importância 0.0044 | valor: 70.2
+
+**Diagnóstico de Fraude:**
+A transação TXN_009930 apresenta um score de fraude de 1.0, indicando alta probabilidade de ser fraudulenta. O principal fator que contribui para essa classificação é o `time_since_last_txn_min` com um valor de 10 minutos e uma importância de 0.9367, sugerindo uma sequência de transações em um curto espaço de tempo. Adicionalmente, o `ip_risk_score` de 0.904 indica que o endereço IP associado à transação possui um alto risco. A `velocity_24h` de 10 transações e a `distance_from_home` de 70.2km também contribuem para o perfil de risco. A transação foi realizada online, de Curitiba, às 02:34:12, e de um dispositivo novo.
+
+**Justificativa:**
+A ação de BLOQUEAR é recomendada devido ao score de fraude máximo (1.0) e à forte evidência de comportamento fraudulento. O fator de maior impacto, `time_since_last_txn_min` (10 minutos), combinado com um `ip_risk_score` elevado (0.904) e uma `velocity_24h` alta (10), são indicadores críticos de fraude, conforme os dados recuperados.","TXN_009930 é classificada como FRAUDE com score de 1.0, e a ação sugerida é BLOQUEAR. Os principais fatores de risco são o time_since_last_txn_min de 10 minutos (Alto Impacto) e o ip_risk_score de 0.904 (Moderado), além de uma velocity_24h de 10 transações e distance_from_home de 70.2 (Contextuais). Esse conjunto indica um padrão de alta velocidade associado a possível rajada de fraude ou account takeover, com forte evidência de atividade suspeita.",0.48,,0.9999999999,
+Qual é a versão do modelo champion em produção e quais são suas métricas de desempenho?,"['MLflow Model Registry: fraud-detector-champion Versão 3 está em Production. Algoritmo: XGBoost. Métricas: AUC 0.9997, Recall 1.0, F1 0.9877.']","A versão 3 do modelo `fraud-detector-champion` está em produção.
+
+**Métricas de Desempenho da Versão 3:**
+*   **Algoritmo:** xgboost
+*   **Dataset:** enriched-v2
+*   **AUC:** 0.9997
+*   **Recall:** 1.0
+*   **F1:** 0.9877
+
+Existem também outras versões em produção: a Versão 2 (AUC: 0.9622, Recall: 0.925, F1: 0.9487) e a Versão 1 (AUC: 0.987, Recall: 0.975), que foi notada por ter o ""melhor F1 — equilíbrio detecção vs falsos positivos"".","Atualmente, a versão do modelo fraud-detector-champion em produção é a Versão 3 (XGBoost, dataset enriched-v2) que apresenta o melhor desempenho, com AUC de 0.9997, Recall de 1.0 e F1 de 0.9877.",,,0.9999999999,
+Por que o XGBoost foi escolhido como champion em vez do MLP?,['Comparativo de Modelos: Champion (XGBoost v3) AUC 0.9997 vs Challenger (MLP v1) AUC 0.9903. O XGBoost apresenta melhor separação de classes e precisão superior.'],Informação não disponível nos dados recuperados. A ferramenta de busca de conhecimento (RAG) não retornou informações específicas sobre os critérios de seleção do modelo XGBoost como champion em detrimento do MLP.,"XGBoost tem AUC 0.9997 e Recall 1.0 na versão 3, superior ao MLP. XGBoost demonstrou melhor capacidade de detecção de fraude com baixo erro.",0.0,,0.9999999999,
+Analise a transação TXN_000001 e diga se é suspeita.,"['Dados da Transação TXN_000001: Score 0.0002, Predição: LEGITIMA. Fatores: time_since_last_txn_min=27, ip_risk_score=0.138, velocity_24h=3, distance_from_home=20.9. Ação: Aprovar.']","**Resumo Executivo:**
+A transação TXN_000001 apresenta um score de fraude de 0.0002, sendo classificada como **LEGÍTIMA**. A ação sugerida é **APROVAR**.
+
+**Detalhamento Técnico:**
+*   **time_since_last_txn_min**: 27 minutos (Importância: 0.9367 - Alto Impacto)
+*   **ip_risk_score**: 0.138 (Importância: 0.0417 - Moderado)
+*   **velocity_24h**: 3 transações (Importância: 0.0055 - Contextual)
+*   **distance_from_home**: 20.9 km (Importância: 0.0044 - Contextual)
+
+**Diagnóstico de Fraude:**
+A transação não apresenta padrões de fraude. O principal fator que contribui para a baixa pontuação de risco é o `time_since_last_txn_min` com um valor de 27 minutos, indicando que houve uma transação recente do cliente, o que geralmente é um sinal de comportamento legítimo. O `ip_risk_score` de 0.138 é baixo, e a `velocity_24h` de 3 transações, juntamente com uma `distance_from_home` de 20.9 km, não indicam anomalias significativas.
+
+**Justificativa:**
+A recomendação de **APROVAR** é baseada no score de fraude extremamente baixo (0.0002) e na classificação como LEGÍTIMA. Os fatores de maior impacto, como o tempo desde a última transação (27 minutos), corroboram para a legitimidade da operação, não havendo indícios suficientes para considerá-la suspeita.","TXN_000001 score 0.0002, predição LEGITIMA, ação APROVAR. time_since_last_txn_min=27 (alto impacto, legítimo), ip_risk_score=0.138 (baixo risco), velocity_24h=3 (normal), distance_from_home=20.9km (contextual). Sem padrões de fraude.",0.631578947368421,,0.9999999999,
+Qual a importância (feature importance) das variáveis do modelo XGBoost?,['Documento de Importância de Variáveis (XGBoost): A análise global do modelo revela a seguinte hierarquia de features. 1. time_since_last_txn_min: 0.9367. 2. ip_risk_score: 0.0417. 3. velocity_24h: 0.0055. 4. distance_from_home: 0.0044.'],"Informação não disponível nos dados recuperados. A ferramenta de busca de conhecimento (RAG) retornou casos similares e regras de fraude, mas não a importância das variáveis do modelo XGBoost.","As variáveis mais importantes do modelo XGBoost são: time_since_last_txn_min (importância 0.9367, alto impacto), ip_risk_score (importância 0.0417, impacto moderado), velocity_24h (importância 0.0055, impacto contextual) e distance_from_home (importância 0.0044, impacto contextual).",0.0,,0.9999999999,
+Mostre casos de fraude com device novo no histórico.,"['Regras de Fraude - Indicadores Críticos: Device novo combinado com transação em menos de 30 minutos após acesso é forte indicador de fraude. Compras em categorias de entretenimento e varejo online à madrugada com device novo combinam múltiplos fatores de risco.', 'Base de Dados de Transações - Casos Históricos de Fraude com Flag de Device Novo: TXN_009971; TXN_009874; TXN_009899; TXN_009985; TXN_009848.']","Aqui estão os casos de fraude com device novo no histórico, conforme solicitado:
+
+**Detalhamento Técnico:**
+Foram encontrados os seguintes casos de fraude confirmada que apresentam similaridade com o padrão de ""device novo no histórico"":
+
+*   **TXN_009935** | CUST_0355 | R$33930.00 | similaridade: 0.516
+*   **TXN_009955** | CUST_0263 | R$5786.62 | similaridade: 0.512
+*   **TXN_009834** | CUST_0100 | R$1015.40 | similaridade: 0.511
+*   **TXN_009971** | CUST_0873 | R$1912.67 | similaridade: 0.507
+*   **TXN_009865** | CUST_0637 | R$567.10 | similaridade: 0.506
+
+**Diagnóstico de Fraude:**
+Com base nas regras de fraude relevantes recuperadas, os padrões associados a ""device novo"" incluem:
+
+*   **Alto Impacto (similaridade: 0.64):** A combinação de um dispositivo novo com uma transação realizada em menos de 30 minutos após o acesso é um forte indicador de fraude.
+*   **Moderado (similaridade: 0.53):** Compras em categorias de entretenimento e varejo online, realizadas durante a madrugada e utilizando um dispositivo novo, combinam múltiplos fatores de risco.
+
+**Justificativa:**
+As transações listadas acima foram identificadas como casos de fraude confirmada e apresentam similaridade com o padrão de uso de ""device novo no histórico"", conforme as regras de fraude recuperadas.","Casos confirmados de fraude no histórico envolvendo o uso de device novo incluem as transações TXN_009971 (R$1912.67), TXN_009874 (R$1918.88), TXN_009899 (R$1763.46), TXN_009985 (R$339.60) e TXN_009848 (R$356.58). O principal padrão de risco associado é o uso do novo dispositivo para transacionar em menos de 30 minutos após o acesso ou para realizar compras de madrugada em varejo online, indicando possível account takeover.",0.5263157894736842,,0.49999999995,
+Existe algum padrão de fraude relacionado a transações na madrugada?,"['Documento de Regras de Negócio: Transações entre 00h e 06h apresentam probabilidade 3x maior de fraude. Fraudadores preferem este horário devido à menor vigilância.', 'Base Histórica de Fraudes (Madrugada): TXN_009971, TXN_009912, TXN_009894, TXN_009979, TXN_009953.']","Resumo Executivo:
+Existe um padrão de fraude significativo relacionado a transações realizadas na madrugada. Transações entre 00h e 06h têm uma probabilidade 3x maior de serem fraudulentas.
+
+Detalhamento Técnico:
+*   **Alto Impacto:**
+    *   Transações realizadas entre 00h e 06h: Probabilidade 3x maior de serem fraudes.
+    *   Compras em categorias de entretenimento e varejo online à madrugada com dispositivo novo: Combinam múltiplos fatores de risco.
+
+Diagnóstico de Fraude:
+O padrão de fraude detectado indica que fraudadores frequentemente operam durante as horas da madrugada (entre 00h e 06h). Este período é considerado de alto risco, e a probabilidade de fraude é significativamente maior. Além disso, a combinação de transações nesse horário com categorias específicas como entretenimento e varejo online, especialmente quando um dispositivo novo é utilizado, é um forte indicador de atividade fraudulenta.
+
+Justificativa:
+As regras de fraude recuperadas demonstram que o período entre 00h e 06h é um horário crítico para a ocorrência de fraudes, com uma probabilidade de fraude 3x maior. A combinação de fatores como o horário da transação, a categoria da compra e o uso de um dispositivo novo são elementos que, juntos, aumentam consideravelmente o risco de fraude, conforme as regras de negócio estabelecidas.","Sim. Existe um padrão de Alto Impacto indicando que transações realizadas na madrugada (entre 00h e 06h) apresentam uma probabilidade 3 vezes maior de serem fraudulentas. Casos históricos confirmados com esse padrão incluem as transações TXN_009971 (R$1912.67), TXN_009912 (R$214.06), TXN_009894 (R$4106.67), TXN_009979 (R$1549.52) e TXN_009953 (R$254.54).",0.6923076923076923,,0.9999999999,
+Mostre casos de fraude com device novo e IP de risco alto.,"[""Regras de Fraude: A combinação de 'device novo' com 'IP de risco alto' indica Account Takeover. O risco é amplificado em compras rápidas ou na madrugada."", 'Base de Casos Confirmados: TXN_009887, TXN_009933, TXN_009985, TXN_009848, TXN_009916.']","**Resumo Executivo:**
+Forneço uma análise de padrões gerais de fraude envolvendo o uso de dispositivos novos, conforme solicitado. Não há um score de fraude ou ação sugerida para uma transação específica, pois a consulta foi sobre padrões gerais.
+
+**Detalhamento Técnico:**
+Com base na sua consulta sobre casos de fraude com dispositivo novo e IP de risco alto, foram identificados os seguintes padrões e exemplos de transações:
+
+*   **Regras de Fraude Relevantes:**
+    *   **Alto Impacto (similaridade: 0.63):** ""Device novo combinado com transação em menos de 30 minutos após acesso é forte indicador de fraude. Dispositivos não rec...""
+    *   **Moderado (similaridade: 0.56):** ""Compras em categorias de entretenimento e varejo online à madrugada com device novo combinam múltiplos fatores de risco....""
+
+*   **Exemplos de Transações Fraudulentas Confirmadas:**
+    *   TXN_009935 | CUST_0355 | R$33930.00 | similaridade: 0.533
+    *   TXN_009834 | CUST_0100 | R$1015.40 | similaridade: 0.53
+    *   TXN_009934 | CUST_0165 | R$1064.29 | similaridade: 0.528
+    *   TXN_009941 | CUST_0384 | R$1060.53 | similaridade: 0.524
+    *   TXN_009971 | CUST_0873 | R$1912.67 | similaridade: 0.524
+
+**Diagnóstico de Fraude:**
+Os padrões de fraude detectados, que se alinham com a sua consulta sobre ""device novo"", indicam que a utilização de um dispositivo recém-identificado é um fator de risco significativo. Especificamente, a combinação de um **device novo** com uma transação realizada em menos de 30 minutos após o acesso é um forte indicador de fraude. Além disso, compras em categorias como entretenimento e varejo online, realizadas durante a madrugada e com um **device novo**, são consideradas de alto risco, pois combinam múltiplos fatores de risco. Embora a sua consulta tenha mencionado ""IP de risco alto"", as regras recuperadas focam mais explicitamente no ""device novo"" e em ""múltiplos fatores de risco"" que podem incluir o risco de IP, mas não o detalham diretamente.
+
+**Justificativa:**
+A recomendação de atenção a esses padrões é baseada na alta similaridade das regras de fraude com a sua consulta. A rapidez da transação após o uso de um novo dispositivo sugere uma tentativa de fraude, onde o fraudador pode estar agindo rapidamente após obter acesso. A combinação com compras em categorias específicas e horários incomuns (madrugada) reforça a suspeita, pois são comportamentos frequentemente associados a atividades fraudulentas, onde os criminosos tentam explorar janelas de menor vigilância ou sistemas automatizados.","Os casos de fraude confirmados que apresentam a combinação crítica de device novo e IP de risco alto são: TXN_009887 (R$1365.38), TXN_009933 (R$1222.81), TXN_009985 (R$339.60), TXN_009848 (R$356.58) e TXN_009916 (R$1200.56). Essa combinação é um forte indicador de Account Takeover.",0.22413793103448276,,0.0,
+O que é card testing no contexto de fraude?,"['Glossário de Fraude: Card Testing é a prática de validar cartões através de transações de baixo valor em massa.', ""Regra de Detecção: Identificada por 'velocity_1h' acima de 3 transações. Comportamento comum: uso de device novo e horário noturno.""]","Resumo Executivo:
+Card testing é uma técnica utilizada por fraudadores para verificar a validade de cartões de crédito roubados ou clonados.
+
+Detalhamento Técnico:
+Os dados recuperados indicam dois padrões principais de card testing:
+*   **Alta Velocidade de Transações:** É considerado anormal quando há mais de 3 transações na mesma hora. Fraudadores frequentemente realizam transações de pequeno valor em rápida sucessão para testar a validade dos cartões clonados.
+*   **Tentativas Falhas Seguidas de Aprovação:** Mais de 2 tentativas falhas nas últimas 24 horas, seguidas por uma transação aprovada, é um padrão clássico de ataque de força bruta. Isso sugere que o fraudador está tentando diferentes combinações ou dados de cartão até conseguir uma aprovação.
+
+Diagnóstico de Fraude:
+O card testing é um precursor comum de fraudes maiores. Ao validar os cartões, os fraudadores podem então utilizá-los para compras de alto valor ou vendê-los no mercado negro.
+
+Justificativa:
+A detecção desses padrões de alta velocidade e múltiplas tentativas falhas é crucial para identificar e mitigar ataques de card testing, prevenindo perdas financeiras significativas e protegendo os titulares dos cartões.","Card testing é uma tática onde fraudadores realizam múltiplas transações de baixo valor em rápida sucessão para verificar se cartões roubados ou gerados estão ativos e possuem limite. Os principais indicadores técnicos são: alta velocidade de transações (velocity_1h > 3), uso de novos dispositivos e concentração na madrugada.",0.28,,0.99999999995,
+Qual o AUC do modelo em produção?,"[""MLflow Model Registry: O modelo 'fraud-detector-champion' versão 3 (Production) possui AUC de 0.9997.""]",O modelo `fraud-detector-champion` em produção (Versão 3) possui um AUC de 0.9997.,"O fraud-detector-champion v3 tem AUC 0.9997, indicando capacidade quase perfeita de distinguir fraudes de transações legítimas.",1.0,,0.9999999999,
+Quantos modelos estão registrados no MLflow?,"['Model Inventory MLflow: 1. fraud-detector-champion (v3, Production). 2. fraud-detector-challenger (v1, Staging).']","Não consigo responder a essa pergunta diretamente. A ferramenta `query_model_registry_tool` permite consultar informações sobre um modelo específico (ex: `fraud-detector-champion`), mas não fornece uma contagem total de modelos registrados no MLflow.","Dois modelos: fraud-detector-champion (3 versões, XGBoost) em production e fraud-detector-challenger (1 versão, MLP PyTorch) em staging.",0.25,,0.0,
+Como o modelo foi treinado?,"['MLflow Training Logs: Algoritmo XGBoost. n_estimators=300, max_depth=6. Dataset: enriched-v2 com 10k amostras.']",Informação não disponível nos dados recuperados. A ferramenta de busca de conhecimento (RAG) não retornou informações sobre como o modelo foi treinado.,"XGBoost com 300 estimadores, max_depth 6, scale_pos_weight ajustado para desbalanceamento (98% legítimo, 2% fraude). Dataset enriched-v2 com 10.000 transações sintéticas.",0.0,,0.9999999999,
+O que é account takeover no contexto de fraude financeira?,['Definição de Risco (ATO): Account Takeover ocorre quando terceiros acessam contas legítimas via device_novo e urgência temporal.'],"Informação não disponível nos dados recuperados. A ferramenta de busca retornou regras de fraude que podem estar relacionadas a padrões de ataque, como o uso de um novo dispositivo para transações logo após o acesso, mas não uma definição direta de ""account takeover"".","Account takeover é quando um fraudador assume controle da conta usando credenciais roubadas. Sinais: device novo, transação rápida após acesso (time_since_last_txn_min baixo), IP suspeito.",0.2,,0.9999999999,
+Qual a diferença entre card testing e account takeover?,['Matriz de Padrões: Card Testing foca em volume (velocity). Account Takeover foca em usurpar identidades (novos acessos).'],"Informação não disponível nos dados recuperados. Não foi possível encontrar uma definição ou comparação explícita entre ""card testing"" e ""account takeover"" nas informações fornecidas.",Card testing: cartões clonados testados com transações pequenas e rápidas (velocity alto). Account takeover: credenciais roubadas de cliente real (device novo + IP suspeito + transação rápida).,0.0,,0.9999999999,
+Uma transação a 200km de casa é sempre fraude?,"[""Regra de Localidade: 'distance_from_home' é contextual. Não gera bloqueio isolado sem outros fatores de risco.""]","Resumo Executivo:
+Uma transação a 200km de casa não é *sempre* fraude, mas é um forte indicador de suspeita. A regra de fraude relevante indica que ""Transação realizada a mais de 50km do endereço habitual do cliente sem notificação prévia de viagem é suspeita"". No entanto, a presença de transações legítimas similares a distâncias consideráveis sugere que outros fatores são considerados na determinação final.
+
+Detalhamento Técnico:
+*   **Distância da transação:** A regra de fraude com similaridade de 0.70 aponta que transações a mais de 50km do endereço habitual do cliente sem notificação prévia de viagem são consideradas suspeitas. Uma distância de 200km se enquadra nesse critério.
+
+Diagnóstico de Fraude:
+A distância da transação em relação ao endereço habitual do cliente é um fator de risco significativo. No entanto, a análise de precedentes históricos mostra que existem transações legítimas com características de distância similares (ex: TXN_003900, TXN_006970, TXN_000110, TXN_000797, TXN_002299). Isso sugere que, embora a distância seja um alerta, ela não é o único determinante para classificar uma transação como fraude. Outros fatores, como o tempo entre transações em diferentes localidades, também são considerados, conforme a regra ""[0.56] Tempo menor que 15 minutos entre transações consecutivas em localidades diferentes é fisicamente impossível e indica fraude..."".
+
+Justificativa:
+Com base nos dados recuperados, uma transação a 200km de casa é um fator de **Alto Impacto** para suspeita de fraude, conforme a regra de 0.70 de similaridade. No entanto, a existência de transações legítimas com características de distância similares impede que se classifique tal evento como *sempre* fraude. A ação sugerida seria **Revisar**, pois a distância é um forte indício, mas a decisão final dependeria da análise de outros fatores contextuais e do score de fraude geral da transação.","Não. Distância é fator contextual — clientes em viagem fazem transações longe de casa. O modelo considera distância combinada com device novo, IP suspeito e velocity para decidir.",0.19047619047619047,,0.9999999999,
+Mostre as regras de fraude mais relevantes para transações online.,"[""Análise de Canal: Transações 'Online' possuem maior correlação com fraude. Risco escala se associado a madrugada e device novo.""]","As regras de fraude mais relevantes para transações online, com base nos dados recuperados, são:
+
+*   Compras em categorias de entretenimento e varejo online à madrugada com dispositivo novo combinam múltiplos fatores de risco.
+*   Transações realizadas entre 00h e 06h têm probabilidade 3x maior de serem fraudes, pois fraudadores operam na madrugada.","Canal online representa 50% das fraudes mas apenas 30% das transações legítimas. Combinado com madrugada e device novo, probabilidade de fraude superior a 90%.",0.3333333333333333,,0.0,
+Mostre casos de fraude com alto velocity nas últimas 24 horas.,"[""Monitoramento: Padrão 'velocity_24h' elevado é classificado como comportamento de teste de cartão.""]","Não foi possível recuperar casos específicos de fraude com alto velocity nas últimas 24 horas. A ferramenta de busca de conhecimento (RAG) retornou uma regra geral sobre o tema, mas não transações individuais que se enquadrem nesse critério.
+
+**Resumo Executivo:**
+Informação não disponível nos dados recuperados.
+
+**Detalhamento Técnico:**
+Informação não disponível nos dados recuperados.
+
+**Diagnóstico de Fraude:**
+Com base nas regras de fraude recuperadas, um padrão de ""alto velocity"" é caracterizado por ""Velocity acima de 3 transações na mesma hora"", o que é considerado anormal. Este comportamento é frequentemente associado a fraudadores que testam cartões clonados com transações pequenas.
+
+**Justificativa:**
+A ferramenta `query_transactions_tool` foi utilizada para buscar casos de fraude com alto velocity. Embora tenha retornado uma regra relevante sobre o que constitui alto velocity em termos de fraude, não foram fornecidos IDs de transações específicas ou detalhes de casos reais que se enquadrem nesse padrão nas últimas 24 horas. Portanto, não é possível apresentar uma análise de casos específicos.",Velocity_24h alto é padrão de card testing. Fraudadores testam cartões clonados com transações rápidas antes de compras maiores. Velocity acima de 3 por hora é anormal.,0.2857142857142857,,0.9999999999,
+Como o ip_risk_score influencia a classificação de fraude?,"[""Dicionário de Features: 'ip_risk_score' > 0.7 indica uso de VPN/Proxy. Exemplo TXN_009930: valor 0.904.""]","O `ip_risk_score` é um fator importante na classificação de fraude. De acordo com as regras de fraude, um IP com score de risco acima de 0.7 indica uma origem suspeita. IPs de proxies, VPNs e redes TOR são frequentemente utilizados em atividades fraudulentas, o que eleva o `ip_risk_score` e, consequentemente, a probabilidade de a transação ser classificada como fraude.","IP risk score acima de 0.7 indica origem suspeita — proxies, VPNs e redes TOR. Na TXN_009930 o score é 0.904, segundo fator de risco mais importante com importância 0.0417.",0.0,,0.9999999999,
+O que significa score de fraude 1.0?,['Lógica do Modelo: Score representa probabilidade de fraude. Threshold: 0.5. Score 1.0 é confiança total.'],"Um score de fraude de 1.0 significa uma probabilidade extremamente alta de que a transação seja fraudulenta.
+
+**Diagnóstico de Fraude:**
+Com base nos dados recuperados, um score de 1.0 indica que a transação se alinha fortemente com padrões de fraude confirmados. Isso pode ser impulsionado por fatores de alto risco, como um IP com score de risco acima de 0.7, que sugere uma origem suspeita (como proxies, VPNs ou redes TOR), ou uma combinação de múltiplos fatores de risco em compras, como transações em categorias de entretenimento e varejo online realizadas à madrugada com um dispositivo novo.
+
+**Justificativa:**
+A associação de um score de 1.0 com ""Fraudes confirmadas"" e a presença de ""Regras de fraude relevantes"" que descrevem condições de alto risco (IPs suspeitos, padrões de compra específicos) fundamentam que este score representa a maior probabilidade de fraude detectada pelo modelo.",Score 1.0 é certeza máxima de fraude. Threshold de decisão é 0.5 — acima disso é FRAUDE. Score 1.0 aciona ação BLOQUEAR imediatamente.,0.07692307692307693,,0.9999999999,
+O que é is_urgent e por que tem alta importância?,"[""Feature Engineering: 'is_urgent' = True se (device_novo = True AND tempo_acesso < 30min). Correlação: 0.770.""]",Informação não disponível nos dados recuperados. A ferramenta de busca de conhecimento (RAG) não retornou informações sobre a feature 'is_urgent' ou sua importância.,"is_urgent combina device novo com transação em menos de 30 minutos — padrão clássico de account takeover. Correlação 0.770 com fraude, a mais alta do dataset.",0.0,,0.9999999999,
+Qual ação tomar quando o score de fraude está entre 0.5 e 0.8?,['Protocolo: Score < 0.5 (Aprovar). 0.5 a 0.8 (Revisar). > 0.8 (Bloquear).'],"Resumo Executivo:
+Informação não disponível nos dados recuperados.
+
+Detalhamento Técnico:
+Informação não disponível nos dados recuperados.
+
+Diagnóstico de Fraude:
+Informação não disponível nos dados recuperados.
+
+Justificativa:
+A ferramenta `query_transactions_tool` foi utilizada para buscar a ação recomendada para scores de fraude entre 0.5 e 0.8. Embora a ferramenta tenha retornado regras de fraude relevantes (como IP com score de risco acima de 0.7 e valor da transação acima de 5x a média do cliente), ela não especificou qual ação (Aprovar/Revisar/Bloquear) deve ser tomada para transações que se enquadram nessa faixa de score. Portanto, não é possível fornecer uma ação sugerida com base exclusiva nos dados recuperados.",Score entre 0.5 e 0.8 indica risco moderado — ação REVISAR. Solicitar confirmação ao cliente antes de aprovar ou bloquear.,0.08333333333333333,,0.9999999999,

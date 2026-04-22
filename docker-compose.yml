@@ -4,3 +4,7 @@ services:
     container_name: chroma
     ports:
       - "8001:8000"
+    volumes:
+      - ./chroma_data:/chroma/chroma  # <--- ADICIONE ESTA LINHA
+    environment:
+      - IS_PERSISTENT=TRUE  

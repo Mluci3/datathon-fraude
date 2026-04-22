@@ -1,14 +1,19 @@
 """
 FastAPI — endpoint do ML Copilot para prevenção a fraude.
 Expõe o agente ReAct e predição direta via HTTP.
+
+v2: endpoint /chat retorna 'contexts' com os outputs reais das tools
+    capturados via ContextCollectorCallback — necessário para RAGAS faithfulness.
 """
 import logging
 import os
 from datetime import datetime
+from typing import Any
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from langchain_core.callbacks import BaseCallbackHandler
 from pydantic import BaseModel
 
 load_dotenv()
@@ -28,7 +33,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# carrega agente uma vez na inicialização
 _agent = None
 
 
@@ -44,6 +48,25 @@ def get_agent():
 
 
 # ─────────────────────────────────────────────
+# CALLBACK: captura outputs das tools para RAGAS
+# ─────────────────────────────────────────────
+
+class ContextCollectorCallback(BaseCallbackHandler):
+    """
+    Intercepta os outputs das tools durante a execução do agente
+    e os coleta como 'contextos recuperados'.
+    Necessário para avaliação correta de faithfulness no RAGAS.
+    """
+
+    def __init__(self):
+        self.contexts: list[str] = []
+
+    def on_tool_end(self, output: Any, **kwargs: Any) -> None:
+        if isinstance(output, str) and output.strip():
+            self.contexts.append(output.strip())
+
+
+# ─────────────────────────────────────────────
 # SCHEMAS
 # ─────────────────────────────────────────────
 
@@ -53,6 +76,7 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
+    contexts: list[str]   # outputs reais das tools — usado pelo RAGAS
     timestamp: str
 
 
@@ -94,13 +118,32 @@ def chat(request: ChatRequest):
     Endpoint principal do agente ReAct.
     Aceita perguntas em linguagem natural sobre fraude,
     modelos e transações.
+
+    Retorna 'contexts' com os outputs reais das tools invocadas
+    durante a execução — usado pelo ragas_eval.py para avaliação
+    correta de faithfulness.
     """
     try:
         logger.info("Chat request: %s", request.message[:100])
         agent = get_agent()
-        result = agent.invoke({"input": request.message})
+
+        # Callback coleta outputs das tools durante a execução
+        collector = ContextCollectorCallback()
+
+        result = agent.invoke(
+            {"input": request.message},
+            config={"callbacks": [collector]},
+        )
+
+        logger.info(
+            "Contexts coletados: %d chunks | resposta: %d chars",
+            len(collector.contexts),
+            len(result["output"]),
+        )
+
         return ChatResponse(
             response=result["output"],
+            contexts=collector.contexts,
             timestamp=datetime.now().isoformat(),
         )
     except Exception as e:

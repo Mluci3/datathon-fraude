@@ -182,7 +182,7 @@ def _query_model_registry_fn(input_str: str) -> str:
 # ─────────────────────────────────────────────
 
 def _query_transactions_fn(input_str: str) -> str:
-    """Busca transações similares no histórico via RAG."""
+    """Busca transações similares e knowledge base via RAG."""
     try:
         client, embedder = _get_rag()
         query = input_str.strip()
@@ -191,6 +191,22 @@ def _query_transactions_fn(input_str: str) -> str:
             query, client, embedder, n_results=5
         )
         rules = search_fraud_rules(query, client, embedder, n_results=2)
+
+        # Busca na knowledge base conceitual
+        try:
+            kb_collection = client.get_collection("knowledge_base")
+            query_embedding = embedder.embed_query(query)
+            kb_results = kb_collection.query(
+                query_embeddings=[query_embedding],
+                n_results=3,
+                include=["documents", "distances"],
+            )
+            kb_docs = [
+                {"text": kb_results["documents"][0][i], "relevance": round(1 - kb_results["distances"][0][i], 3)}
+                for i in range(len(kb_results["ids"][0]))
+            ] if kb_results["ids"][0] else []
+        except Exception:
+            kb_docs = []
 
         output = f"CASOS SIMILARES para: '{query}'\n\n"
 
@@ -219,6 +235,12 @@ def _query_transactions_fn(input_str: str) -> str:
             output += "\nRegras de fraude relevantes:\n"
             for r in rules:
                 output += f"  [{r['relevance']:.2f}] {r['rule'][:120]}...\n"
+
+        if kb_docs:
+            output += "\nConhecimento conceitual relevante:\n"
+            for k in kb_docs:
+                if k['relevance'] > 0.3:
+                    output += f"  [{k['relevance']:.2f}] {k['text']}\n"
 
         return output
 
