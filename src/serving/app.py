@@ -186,7 +186,7 @@ print(json.dumps({{"score": round(score, 4)}}))
     try:
         result = subprocess.run(
             [sys.executable, "-c", script],
-            capture_output=True, text=True, timeout=30
+            capture_output=True, text=True, timeout=60
         )
         data = json.loads(result.stdout.strip())
 
