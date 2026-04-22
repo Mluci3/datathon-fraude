@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-04-22T19:47:57.921458",
+  "reference_size": 7000,
+  "current_size": 3000,
+  "share_drifted_evidently": 0.0,
+  "psi_max": 0.0054,
+  "psi_avg": 0.0022,
+  "n_features_stable": 10,
+  "n_features_warning": 0,
+  "n_features_retrain_trigger": 0,
+  "psi_by_feature": {
+    "amount": 0.0042,
+    "distance_from_home": 0.0042,
+    "velocity_1h": 0.0011,
+    "velocity_24h": 0.0036,
+    "ip_risk_score": 0.0054,
+    "time_since_last_txn_min": 0.0029,
+    "failed_txns_last_24h": 0.0,
+    "is_new_device": 0.0004,
+    "is_night": 0.0003,
+    "is_urgent": 0.0
+  },
+  "html_report": "evaluation/drift_report_20260422_194346.html",
+  "recommendation": "STABLE — distribuição dentro dos limites esperados"
+}
