@@ -1,0 +1,100 @@
+# model_config.yaml
+# Configuração do modelo champion e challenger — datathon-fraude
+# Autora: Maria L F de Araujo — Turma 6MLET, FIAP/PosTech
+
+# ─────────────────────────────────────────────
+# Champion — XGBoost fraud-detector-champion v3
+# MLflow run: fe09a6fca4ef499f86ba57cda879d8fe
+# ─────────────────────────────────────────────
+champion:
+  name: fraud-detector-champion
+  version: 3
+  algorithm: xgboost
+  stage: production
+  dataset: enriched-v2
+  artifact: models/champion_v3.joblib
+
+  hyperparameters:
+    n_estimators: 300
+    max_depth: 6
+    learning_rate: 0.1
+    scale_pos_weight: 49      # ratio legítimas/fraudes (98:2 → 49:1)
+    random_state: 42
+    eval_metric: auc
+
+  training:
+    n_samples_train: 8000
+    n_samples_test: 2000
+    test_size: 0.2
+    n_features: 17
+    dataset_version: enriched-v2
+
+  metrics:
+    auc: 0.9997
+    precision: 0.9756
+    recall: 1.0000
+    f1: 0.9877
+
+  decision_thresholds:
+    fraud: 0.5      # score >= 0.5 → FRAUDE
+    review: 0.5     # score entre 0.5 e 0.8 → REVISAR
+    block: 0.8      # score >= 0.8 → BLOQUEAR
+
+  feature_cols:
+    - amount
+    - distance_from_home
+    - velocity_1h
+    - velocity_24h
+    - avg_amount_30d
+    - account_balance
+    - is_new_device
+    - time_since_last_txn_min
+    - failed_txns_last_24h
+    - ip_risk_score
+    - amount_ratio
+    - is_night
+    - high_velocity
+    - is_online
+    - is_credit
+    - is_urgent
+    - merchant_category_encoded
+
+# ─────────────────────────────────────────────
+# Challenger — MLP PyTorch fraud-detector-challenger v1
+# MLflow run: 9723e431e03e48c0bcdf48541ebb70b0
+# ─────────────────────────────────────────────
+challenger:
+  name: fraud-detector-challenger
+  version: 1
+  algorithm: mlp-pytorch
+  stage: staging
+  dataset: enriched-v2
+
+  hyperparameters:
+    hidden_layers: [64, 32]
+    activation: relu
+    dropout: 0.3
+    epochs: 50
+    batch_size: 256
+    learning_rate: 0.001
+    optimizer: adam
+    pos_weight: 49
+
+  metrics:
+    auc: 0.9903
+    precision: 0.5128
+    recall: 1.0000
+    f1: 0.6780
+
+  notes: >
+    Challenger descartado como champion por Precision baixa (0.51) — classificação
+    indiscriminada com Recall 1.0 mas F1 0.68. XGBoost oferece melhor equilíbrio.
+
+# ─────────────────────────────────────────────
+# Critérios de promoção champion-challenger
+# ─────────────────────────────────────────────
+promotion_criteria:
+  min_delta_auc: 0.005       # challenger precisa superar champion em >= 0.5% AUC
+  min_recall: 0.95           # Recall mínimo aceitável em produção
+  min_precision: 0.90        # Precision mínima aceitável em produção
+  require_human_approval: true
