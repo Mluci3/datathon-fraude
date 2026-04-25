@@ -11,37 +11,70 @@ dependencies = [
     "numpy>=1.26.0",
     "pandera>=0.18.0",
     "dvc>=3.0.0",
+
+    # visualização e EDA
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+
+    # notebooks
     "jupyter>=1.0.0",
     "nbconvert>=7.0.0",
+    "ipykernel>=6.0.0",
 
     # ml
     "scikit-learn>=1.4.0",
     "xgboost>=2.0.0",
     "torch>=2.2.0",
-    "shap>=0.45.1", # Atualizado para melhor estabilidade no M1
+    "shap>=0.45.1",
 
     # mlflow
     "mlflow>=2.10.0",
 
-    # llm e agente - ATUALIZADOS PARA LANGCHAIN 0.3 + GEMINI
+    # llm e agente — Gemini 2.5 Flash via LangChain 0.3
     "langchain>=0.3.0",
     "langchain-community>=0.3.0",
     "langchain-core>=0.3.0",
-    "langchain-google-genai>=2.0.0", # Essencial para o Gemini 2.0
-    "langchain-groq>=0.2.0",
-    "chromadb>=0.5.0", # Versão mais estável para o Docker que você está usando
-    "sentence-transformers>=3.0.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-openai>=0.1.0",    # dependência interna do RAGAS
+    "chromadb>=0.5.0",
 
     # api
     "fastapi>=0.110.0",
     "uvicorn>=0.27.0",
+    "requests>=2.31.0",
+
+    # segurança — guardrails e PII
+    "presidio-analyzer>=2.2.0",
+    "presidio-anonymizer>=2.2.0",
 
     # observabilidade e avaliação
-    "evidently>=0.4.0",
+    "evidently>=0.7.0",
     "langfuse>=2.0.0",
-    "ragas>=0.2.15", # Adicionado aqui já que você vai rodar na Etapa 3
+    "ragas>=0.2.15",
 
     # utilitários
     "python-dotenv>=1.0.0",
     "joblib>=1.3.0",
+    "tenacity>=8.0.0",            # resiliência no RAG pipeline (rate limit)
 ]
+
+[tool.ruff]
+line-length = 150
+target-version = "py311"
+
+[tool.ruff.lint]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+
+[tool.bandit]
+skips = ["B101", "B311"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=src --cov-report=term-missing"
