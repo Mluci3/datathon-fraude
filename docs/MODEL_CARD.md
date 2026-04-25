@@ -117,13 +117,16 @@ O critério adotado é que o **Recall não deve variar significativamente entre 
 
 ### 5.3 Resultados
 
-| Segmento (`merchant_category`) | Recall | Observação |
-|---|---|---|
-| [categoria 1] | [valor] | [preencher após análise] |
-| [categoria 2] | [valor] | [preencher após análise] |
-| [categoria N] | [valor] | [preencher após análise] |
+| Segmento (`merchant_category`) | N° Fraudes | Recall | Precision | Observação |
+|---|---|---|---|---|
+| alimentacao | 20 | 1.0000 | 1.0000 | ✅ Sem disparidade |
+| educacao | 12 | 1.0000 | 0.9231 | ✅ Sem disparidade |
+| entretenimento | 62 | 1.0000 | 1.0000 | ✅ Sem disparidade |
+| saude | 13 | 1.0000 | 1.0000 | ✅ Sem disparidade |
+| transporte | 18 | 1.0000 | 1.0000 | ✅ Sem disparidade |
+| varejo | 75 | 1.0000 | 1.0000 | ✅ Sem disparidade |
 
-> **Nota:** Os valores desta tabela devem ser preenchidos com os resultados da análise de segmentação executada em `notebooks/04_fairness_analysis.ipynb`. O resultado geral esperado, dado o Recall global de 1.0, é de ausência de disparidade significativa entre segmentos.
+**Conclusão:** Recall 1.0 em todas as 6 categorias de merchant — o modelo não apresenta disparidade de desempenho entre segmentos. A categoria `educacao` apresenta Precision ligeiramente menor (0.9231) indicando alguns falsos positivos nesse segmento, sem impacto no Recall. Este resultado é consistente com o Recall global do modelo (1.0) e confirma ausência de viés por categoria de estabelecimento.
 
 ---
 

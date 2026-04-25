@@ -2,9 +2,9 @@
 
 **Versão do documento:** 1.0  
 **Data:** Abril de 2026  
-**Autora:** [Nome do Aluno] — Turma 6MLET, FIAP/PosTech  
+**Autora:** Maria L F de Araujo — Turma 6MLET, FIAP/PosTech  
 **Repositório:** github.com/Mluci3/datathon-fraude  
-**Contato:** [e-mail]
+**Contato:** mluci3@gmail.com
 
 ---
 
@@ -41,14 +41,14 @@ O sistema opera como um **ML Copilot** — um assistente conversacional para ana
 │  └──────────┘    └───────────┘    └────────┬─────────┘  │
 │                                            │            │
 │  ┌──────────┐    ┌───────────┐    ┌────────▼─────────┐  │
-│  │ XGBoost  │    │  FastAPI  │    │  Gemini 2.5  Flash│  │
-│  │ Champion │◀───│  Endpoint │    │  (Google AI)      │  │
+│  │ XGBoost  │    │  FastAPI  │    │  Gemini 2.5 Flash│  │
+│  │ Champion │◀───│  Endpoint │    │  (Google AI)     │  │
 │  │  v3      │    │           │    └──────────────────┘  │
 │  └──────────┘    └───────────┘                          │
 │                                                         │
 │  ┌──────────────────────────────────────────────────┐   │
 │  │  Guardrails: InputGuardrail + OutputGuardrail    │   │
-│  │  Observabilidade: Prometheus + Grafana + Langfuse│   │
+│  │  Observabilidade: Langfuse + Evidently           │   │
 │  └──────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -64,7 +64,7 @@ O sistema opera como um **ML Copilot** — um assistente conversacional para ana
 | **Agente** | LangChain 0.3.25 + `langchain-google-genai>=2.0.0` com 3 tools customizadas |
 | **Serving** | FastAPI (endpoints: /health, /chat, /predict, /models) |
 | **RAG** | LangChain + Chroma (Docker, porta 8001) + Google Gemini Embeddings (`models/gemini-embedding-001`) |
-| **Observabilidade** | Prometheus, Grafana, Langfuse |
+| **Observabilidade** | Langfuse (telemetria LLMOps) + Evidently (drift detection) |
 | **Segurança** | Guardrails customizados, Presidio (PII) |
 | **Qualidade de código** | ruff, mypy, bandit, pytest, GitHub Actions |
 | **Infraestrutura** | Docker + docker-compose, Makefile |
@@ -170,24 +170,36 @@ A avaliação utilizou **Gemini 2.5 Flash como juiz** (`ragas_eval.py`) sobre o 
 
 | Métrica RAGAS | Valor | Status | Observação |
 |---|---|---|---|
-| Context Precision | 0.8333 | ✅ | RAG recupera contexto relevante com boa precisão |
-| Faithfulness | 0.2627 | ⚠️ | Agente extrapola o contexto recuperado — ver análise abaixo |
-| Answer Relevancy | NaN | ⚠️ | Juiz não conseguiu avaliar — respostas truncadas por iteration limit |
-| Answer Correctness | NaN | ⚠️ | Juiz não conseguiu avaliar — respostas truncadas por iteration limit |
-| Amostras avaliadas | 21/25 | — | 4 amostras falharam por timeout do agente |
+| Faithfulness | 0.7670 | ✅ | Agente fundamenta respostas no contexto recuperado |
+| Answer Relevancy | 0.7108 | ✅ | Respostas relevantes para as queries dos analistas |
+| Context Precision | 0.8182 | ✅ | RAG recupera contexto relevante com boa precisão |
+| Answer Correctness | 0.6509 | ⚠️ | Alinhamento semântico com ground truth — ver análise abaixo |
+| Amostras avaliadas | 22/25 | — | 3 amostras falharam por timeout do subprocess (explain_prediction_tool) |
 
-### 6.4 Análise dos Resultados
+### 6.4 Evolução entre Runs
 
-**Context Precision 0.83** é um resultado sólido — indica que o pipeline RAG (Chroma + Gemini Embeddings `models/gemini-embedding-001`) está recuperando contexto relevante para as queries dos analistas.
+| Métrica | Run 1 | Run 2 | Run 3 (final) |
+|---|---|---|---|
+| Faithfulness | 0.2627 | 0.7136 | **0.7670** |
+| Context Precision | 0.8333 | 0.7000 | **0.8182** |
+| Answer Relevancy | NaN | 0.5886 | **0.7108** |
+| Answer Correctness | NaN | 0.5886 | **0.6509** |
+| Amostras válidas | 21 | 20 | **22** |
 
-**Faithfulness 0.26** é o resultado mais crítico. O agente está gerando respostas que não se sustentam integralmente no contexto recuperado, extrapolando com conhecimento próprio do LLM. O system prompt contém instruções explícitas contra esse comportamento, mas o Gemini 2.5 Flash ainda assim completa com conhecimento próprio nas queries mais complexas — comportamento esperado em modelos de grande porte com forte prior de conhecimento.
+**Melhorias entre runs:**
+- Run 1→2: indexação da knowledge base conceitual elevou faithfulness de 0.26 para 0.71
+- Run 2→3: correção do embedding (`gemini-embedding-001`), aumento de timeout do subprocess e `max_iterations=10` resolveram answer_relevancy e answer_correctness NaN
 
-**NaN em Answer Relevancy e Answer Correctness** indica que o juiz Gemini não conseguiu avaliar as respostas, provavelmente devido a outputs truncados pelo `iteration limit` do agente (`max_iterations=6`). Este comportamento está diretamente ligado à limitação documentada na Seção 4.3.
+### 6.5 Análise dos Resultados
+
+**Faithfulness 0.77 e Context Precision 0.82** confirmam que o pipeline RAG (Chroma + Gemini Embeddings `models/gemini-embedding-001`) está recuperando contexto relevante e o agente está fundamentando suas respostas nesse contexto.
+
+**Answer Correctness 0.65** é a métrica mais conservadora — compara semanticamente a resposta gerada com o ground truth exato do golden set. O delta reflete principalmente as 3 amostras ignoradas por timeout da `explain_prediction_tool` (subprocess de predição) e a estrutura mais rica das respostas do agente em relação ao ground truth sintético.
 
 **Plano de melhoria (trabalhos futuros):**
-- Aumentar `max_iterations` de 6 para 8–10 para reduzir truncamentos
-- Adicionar instrução de grounding mais agressiva no system prompt para reduzir faithfulness baixa
-- Decompor queries complexas em chamadas menores antes de enviar ao agente
+- Aumentar timeout do subprocess de 60s para 90s para capturar as 3 amostras restantes
+- Pré-carregar o modelo em memória para eliminar latência de cold start no subprocess
+- Expandir o golden set com ground truths mais ricos para melhorar answer_correctness
 
 ### 6.4 LLM-as-Judge
 
@@ -276,10 +288,11 @@ Cinco cenários de adversarial testing executados e documentados em `docs/RED_TE
 
 | Componente | Ferramenta | O que monitora |
 |---|---|---|
-| Métricas operacionais | Prometheus + Grafana | Latência, throughput, erros do endpoint FastAPI |
-| Telemetria LLMOps | Langfuse | Traces do agente, tool calls, latência do LLM |
-| Drift detection | Evidently (PSI) | Desvio de distribuição das features de entrada |
+| Telemetria LLMOps | Langfuse | Traces do agente, tool calls, latência, scores de qualidade |
+| Drift detection | Evidently (PSI) | Desvio de distribuição das features de entrada (`src/monitoring/drift.py`) |
 | Experiment tracking | MLflow | Parâmetros, métricas e artefatos de todos os runs |
+
+> **Nota arquitetural:** Prometheus + Grafana foram avaliados e descartados. O Langfuse já entrega telemetria e dashboard end-to-end para o componente LLM — principal componente do sistema. Métricas operacionais HTTP do FastAPI são cobertas por logs estruturados. Decisão registrada em `docs/DATATHON_GAPS_E_DECISOES_v3.md` Seção 5.
 
 ---
 
@@ -304,7 +317,8 @@ As principais decisões de gap que impactam este System Card:
 
 - **Domínio:** prevenção a fraudes em transações financeiras (inferido a partir do material público do repositório do desafio)
 - **Critérios de negócio:** priorização de Recall sobre Precision (custo assimétrico de fraudes não detectadas)
-- **Stack LLM:** Ollama (Phi-3 Mini — loop no M1) → Groq LLaMA 3.3 70B (rate limit 100k tokens/dia) → **Gemini 2.5 Flash** (solução definitiva — integração nativa com embeddings, limite adequado)
+- **Stack LLM:** Ollama (Phi-3 Mini — loop no M1) → Groq LLaMA 3.3 70B (rate limit 100k tokens/dia inviabilizou RAGAS) → **Gemini 2.5 Flash** (solução definitiva — integração nativa com embeddings, sem limite diário)
+- **Observabilidade:** Langfuse + Evidently — Prometheus + Grafana descartados (custo de configuração ~2 dias não justificado no prazo de projeto solo)
 - **line-length:** 150 em vez do default 88, para strings de regras de negócio do domínio de fraude
 
 ---

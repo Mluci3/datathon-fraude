@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>EDA — datathon-fraude</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; color: #333; }
+  h1 { color: #2c3e50; border-bottom: 3px solid #e74c3c; padding-bottom: 10px; }
+  h2 { color: #2c3e50; margin-top: 40px; }
+  img { max-width: 100%; border: 1px solid #ddd; border-radius: 8px; margin: 15px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+  th { background: #2c3e50; color: white; padding: 10px; text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid #ddd; }
+  tr:nth-child(even) { background: #f9f9f9; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+  .green { background: #d4edda; color: #155724; }
+  .insight { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; margin: 15px 0; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>📊 Análise Exploratória de Dados — datathon-fraude</h1>
+<p><strong>Autora:</strong> Maria L F de Araujo — Turma 6MLET, FIAP/PosTech<br>
+<strong>Dataset:</strong> enriched-v2 — 10,000 transações sintéticas | seed=42<br>
+<strong>Repositório:</strong> github.com/Mluci3/datathon-fraude</p>
+
+<h2>1. Distribuição das Classes</h2>
+<img src="../docs/eda_class_distribution.png" alt="Distribuição de Classes">
+<div class="insight">
+⚠️ <strong>Desbalanceamento severo (98:2)</strong> — justifica o uso de <code>scale_pos_weight</code> no XGBoost 
+e a priorização de Recall sobre Precision. O custo de uma fraude não detectada supera o custo de um falso alarme.
+</div>
+
+<table>
+<tr><th>Classe</th><th>Contagem</th><th>Percentual</th></tr>
+<tr><td>Legítima</td><td>9,800</td><td>98.0%</td></tr>
+<tr><td>Fraude</td><td>200</td><td>2.0%</td></tr>
+<tr><td><strong>Ratio</strong></td><td colspan="2"><strong>49:1</strong></td></tr>
+</table>
+
+<h2>2. Feature Importance — XGBoost Champion v3</h2>
+<img src="../docs/eda_feature_importance.png" alt="Feature Importance">
+<div class="insight">
+🎯 <strong>time_since_last_txn_min</strong> concentra <strong>93.67%</strong> da importância total do modelo. 
+Features temporais são os sinais mais fortes de fraude no dataset enriched-v2.
+</div>
+
+<table>
+<tr><th>Feature</th><th>Importância</th><th>Categoria</th></tr>
+<tr><td>time_since_last_txn_min</td><td>0.9367</td><td>🔴 Alto</td></tr><tr><td>ip_risk_score</td><td>0.0417</td><td>🟡 Moderado</td></tr><tr><td>velocity_24h</td><td>0.0055</td><td>🟢 Contextual</td></tr><tr><td>distance_from_home</td><td>0.0044</td><td>🟢 Contextual</td></tr><tr><td>amount</td><td>0.0026</td><td>🟢 Contextual</td></tr><tr><td>amount_ratio</td><td>0.0023</td><td>🟢 Contextual</td></tr><tr><td>failed_txns_last_24h</td><td>0.0019</td><td>🟢 Contextual</td></tr><tr><td>is_urgent</td><td>0.0016</td><td>🟢 Contextual</td></tr><tr><td>is_new_device</td><td>0.0012</td><td>🟢 Contextual</td></tr><tr><td>is_night</td><td>0.0011</td><td>🟢 Contextual</td></tr><tr><td>velocity_1h</td><td>0.0006</td><td>🟢 Contextual</td></tr><tr><td>merchant_category_encoded</td><td>0.0002</td><td>🟢 Contextual</td></tr><tr><td>avg_amount_30d</td><td>0.0002</td><td>🟢 Contextual</td></tr><tr><td>account_balance</td><td>0.0001</td><td>🟢 Contextual</td></tr><tr><td>is_online</td><td>0.0000</td><td>🟢 Contextual</td></tr><tr><td>high_velocity</td><td>0.0000</td><td>🟢 Contextual</td></tr><tr><td>is_credit</td><td>0.0000</td><td>🟢 Contextual</td></tr>
+</table>
+
+<h2>3. Distribuição das Top Features por Classe</h2>
+<img src="../docs/eda_top_features_distribution.png" alt="Distribuição Top Features">
+
+<h2>4. Correlação com is_fraud</h2>
+<img src="../docs/eda_correlation.png" alt="Correlação">
+<div class="insight">
+📌 <strong>is_urgent</strong> tem a maior correlação (0.770) com fraude — feature de engenharia que combina 
+<code>device_novo=True</code> AND <code>tempo_acesso &lt; 30min</code>, padrão clássico de account takeover.
+</div>
+
+<table>
+<tr><th>Feature</th><th>Correlação com is_fraud</th></tr>
+<tr><td>is_urgent</td><td style='color:#e74c3c'>0.7698</td></tr><tr><td>distance_from_home</td><td style='color:#e74c3c'>0.7369</td></tr><tr><td>failed_txns_last_24h</td><td style='color:#e74c3c'>0.6925</td></tr><tr><td>ip_risk_score</td><td style='color:#e74c3c'>0.5821</td></tr><tr><td>velocity_24h</td><td style='color:#e74c3c'>0.4165</td></tr><tr><td>high_velocity</td><td style='color:#e74c3c'>0.4164</td></tr><tr><td>is_new_device</td><td style='color:#e74c3c'>0.3720</td></tr><tr><td>velocity_1h</td><td style='color:#e74c3c'>0.3667</td></tr><tr><td>is_night</td><td style='color:#e74c3c'>0.3488</td></tr><tr><td>amount</td><td style='color:#e74c3c'>0.3231</td></tr><tr><td>amount_ratio</td><td style='color:#e74c3c'>0.3231</td></tr><tr><td>merchant_category_encoded</td><td style='color:#e74c3c'>0.1257</td></tr><tr><td>is_online</td><td style='color:#e74c3c'>0.0613</td></tr><tr><td>is_credit</td><td style='color:#e74c3c'>0.0495</td></tr><tr><td>account_balance</td><td style='color:#3498db'>-0.0579</td></tr><tr><td>avg_amount_30d</td><td style='color:#3498db'>-0.0685</td></tr><tr><td>time_since_last_txn_min</td><td style='color:#3498db'>-0.2353</td></tr>
+</table>
+
+<h2>5. Análise por merchant_category</h2>
+<img src="../docs/eda_merchant_category.png" alt="Merchant Category">
+
+<table>
+<tr><th>Categoria</th><th>Total</th><th>Fraudes</th><th>Taxa de Fraude</th></tr>
+<tr><td>entretenimento</td><td>1,049.0</td><td>62</td><td>5.9%</td></tr><tr><td>varejo</td><td>1,503.0</td><td>75</td><td>5.0%</td></tr><tr><td>educacao</td><td>984.0</td><td>12</td><td>1.2%</td></tr><tr><td>transporte</td><td>2,005.0</td><td>18</td><td>0.9%</td></tr><tr><td>saude</td><td>1,496.0</td><td>13</td><td>0.9%</td></tr><tr><td>alimentacao</td><td>2,963.0</td><td>20</td><td>0.7%</td></tr>
+</table>
+
+<h2>6. Análise de Fairness por Categoria</h2>
+<img src="../docs/eda_fairness.png" alt="Fairness">
+<div class="insight">
+✅ <strong>Recall 1.0 em todas as 6 categorias</strong> — o modelo não apresenta disparidade de desempenho 
+entre segmentos de merchant. Ausência de viés por categoria confirmada.
+</div>
+
+<table>
+<tr><th>Categoria</th><th>Recall</th><th>Precision</th><th>Status</th></tr>
+<tr><td>alimentacao</td><td>1.0000</td><td>1.0000</td><td><span class='badge green'>✅ OK</span></td></tr><tr><td>educacao</td><td>1.0000</td><td>0.9231</td><td><span class='badge green'>✅ OK</span></td></tr><tr><td>entretenimento</td><td>1.0000</td><td>1.0000</td><td><span class='badge green'>✅ OK</span></td></tr><tr><td>saude</td><td>1.0000</td><td>1.0000</td><td><span class='badge green'>✅ OK</span></td></tr><tr><td>transporte</td><td>1.0000</td><td>1.0000</td><td><span class='badge green'>✅ OK</span></td></tr><tr><td>varejo</td><td>1.0000</td><td>1.0000</td><td><span class='badge green'>✅ OK</span></td></tr>
+</table>
+
+<h2>7. Insights e Decisões de Negócio</h2>
+<table>
+<tr><th>Insight</th><th>Impacto</th><th>Decisão Tomada</th></tr>
+<tr><td>Desbalanceamento severo (98:2)</td><td>Alto</td><td>scale_pos_weight no XGBoost</td></tr>
+<tr><td>time_since_last_txn_min domina (93.67%)</td><td>Alto</td><td>Feature temporal como foco principal</td></tr>
+<tr><td>is_urgent correlação 0.770</td><td>Alto</td><td>Feature de engenharia combinada</td></tr>
+<tr><td>ip_risk_score > 0.7 indica fraude</td><td>Médio</td><td>Regra indexada no RAG</td></tr>
+<tr><td>Recall 1.0 em todas as categorias</td><td>Positivo</td><td>Fairness confirmada — sem viés</td></tr>
+<tr><td>Varejo (75) e Entretenimento (62) com mais fraudes</td><td>Médio</td><td>Regras específicas no RAG</td></tr>
+</table>
+
+<hr>
+<p style="color:#999; font-size:12px;">Gerado automaticamente por notebooks/run_eda.py | Abril/2026</p>
+</body>
+</html>
