@@ -34,3 +34,11 @@ data/raw/*.csv
 data/raw/*.parquet
 data/processed/*.csv
 data/processed/*.parquet
+
+# Editor
+.vscode/
+
+./chroma_data/
+./langfuse_data/
+.DS_Store
+src/*.egg-info/

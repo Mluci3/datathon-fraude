@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-22T19:47:57.921458",
+  "timestamp": "2026-04-22T20:33:16.834338",
   "reference_size": 7000,
   "current_size": 3000,
   "share_drifted_evidently": 0.0,
@@ -20,6 +20,6 @@
     "is_night": 0.0003,
     "is_urgent": 0.0
   },
-  "html_report": "evaluation/drift_report_20260422_194346.html",
+  "html_report": "evaluation/drift_report_20260422_203316.html",
   "recommendation": "STABLE — distribuição dentro dos limites esperados"
 }

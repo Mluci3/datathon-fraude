@@ -226,6 +226,7 @@ def run_drift_detection(
     if log_to_mlflow:
         try:
             mlflow.set_tracking_uri(MLFLOW_URI)
+            mlflow.set_experiment("datathon-fraude")
             with mlflow.start_run(run_name=f"drift_detection_{timestamp}"):
                 mlflow.set_tag("type", "drift_monitoring")
                 mlflow.set_tag("dataset", "enriched-v2")
