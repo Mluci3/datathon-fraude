@@ -54,6 +54,25 @@ Este projeto foi desenvolvido individualmente sem o enunciado formal da empresa 
 
 ---
 
+## ⚠️ Limitações e validade dos resultados
+
+> As métricas acima são excelentes porque o modelo foi treinado e avaliado em **dados sintéticos**. Elas **não devem ser lidas como o desempenho esperado em produção real**.
+
+**Por que as métricas são tão altas (AUC 0.9997, Recall 1.0):**
+- O dataset é 100% sintético (10.000 transações, ~2% de fraude, `seed=42`, gerado com SDV e versionado via DVC). Como os padrões de fraude são gerados a partir de regras e distribuições conhecidas, as classes ficam muito mais **separáveis** do que em dados reais — por isso AUC ~1.0 e Recall 1.0.
+- Em fraude real os padrões são ruidosos, mudam no tempo (*concept drift*) e os fraudadores se adaptam de forma adversarial. Métricas quase perfeitas são esperadas em dados sintéticos separáveis, não em produção.
+
+**O que mudaria com dados reais:**
+- Recall e precision cairiam, com um trade-off explícito entre bloquear fraude e barrar cliente legítimo.
+- Seria necessária **validação temporal** (treinar no passado, testar no futuro) em vez de split aleatório, além de monitoramento de **drift** (já previsto em `src/monitoring/drift.py`) e **recalibração** periódica.
+- Atenção redobrada a **data leakage** (features disponíveis só após a decisão) e a desbalanceamento mais severo.
+
+**Por que o projeto continua válido:** o objetivo aqui é demonstrar a **engenharia de ponta a ponta** (pipeline MLOps, agente ReAct, RAG, avaliação e governança), não bater recorde de métrica. O uso de dados sintéticos é uma decisão consciente e documentada.
+
+Documentação detalhada: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md) · [`docs/SYSTEM_CARD.md`](docs/SYSTEM_CARD.md) · [`docs/DATATHON_GAPS_E_DECISOES_v3.md`](docs/DATATHON_GAPS_E_DECISOES_v3.md).
+
+---
+
 ## Arquitetura
 
 ```
