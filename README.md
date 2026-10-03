@@ -8,6 +8,8 @@
 
 ---
 
+> **TL;DR (English):** An end-to-end MLOps platform for financial fraud detection that pairs an **XGBoost** classifier (champion) / MLP (challenger) — tracked in **MLflow** — with a **ReAct LLM agent** ("ML Copilot", LangChain + Gemini 2.5 Flash) and a **RAG** knowledge base (Chroma). Fraud analysts query and interpret the model's decisions in natural language. Includes **RAGAS + LLM-as-judge** evaluation and governance (OWASP Top 10 LLM, red team, LGPD). Note: trained on **synthetic data** — see the Limitations section.
+
 ## Sobre o Projeto
 
 O **datathon-fraude** é uma plataforma MLOps completa para detecção e prevenção de fraudes em transações financeiras. O sistema combina um modelo XGBoost de alta performance com um agente LLM (ML Copilot) que permite a analistas de fraude consultar predições, interpretar decisões do modelo e investigar padrões via linguagem natural.
@@ -42,6 +44,16 @@ Este projeto foi desenvolvido individualmente sem o enunciado formal da empresa 
 | Answer Relevancy | 0.711 | ✅ |
 | Context Precision | 0.818 | ✅ |
 | Answer Correctness | 0.651 | ⚠️ |
+
+**Sobre a Answer Correctness (0.651):** é a métrica mais conservadora do RAGAS — compara semanticamente a resposta do agente com o *ground truth* exato do golden set. O resultado foi obtido por **iteração ao longo de 3 runs**:
+
+| Métrica | Run 1 | Run 2 | Run 3 (final) |
+|---|---|---|---|
+| Faithfulness | 0.26 | 0.71 | **0.77** |
+| Answer Relevancy | NaN | 0.59 | **0.71** |
+| Answer Correctness | NaN | 0.59 | **0.65** |
+
+A indexação da knowledge base conceitual (Run 1→2) elevou o faithfulness; a correção do embedding (`gemini-embedding-001`), o aumento do timeout do subprocess e `max_iterations` (Run 2→3) resolveram os valores `NaN`. O gap restante vem de **3 das 25 amostras** ignoradas por timeout do subprocess de predição e da estrutura mais rica das respostas do agente frente ao ground truth sintético. **Próximos passos:** subir o timeout do subprocess (60→90s), pré-carregar o modelo em memória e enriquecer o golden set. (Detalhes em [`docs/SYSTEM_CARD.md`](docs/SYSTEM_CARD.md) seções 6.4–6.5.)
 
 ### LLM-as-Judge (3 critérios)
 
@@ -96,6 +108,25 @@ Documentação detalhada: [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md) · [`docs/S
 │  │  Observabilidade: Langfuse + Evidently           │   │
 │  └──────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
+```
+
+### Fluxo do agente (ML Copilot)
+
+```mermaid
+flowchart TD
+    A["Analista — pergunta em linguagem natural"] --> IG["InputGuardrail"]
+    IG --> AG["Agente ReAct · Gemini 2.5 Flash (LangChain)"]
+    AG -->|decide a tool| T1["explain_prediction_tool"]
+    AG -->|decide a tool| T2["query_model_registry_tool"]
+    AG -->|decide a tool| T3["query_transactions_tool"]
+    T1 --> M["XGBoost champion v3 — score de fraude + features"]
+    T2 --> R["MLflow Model Registry"]
+    T3 --> C["RAG — Chroma + Gemini Embeddings"]
+    M --> AG
+    R --> AG
+    C --> AG
+    AG --> OG["OutputGuardrail — remoção de PII (Presidio)"]
+    OG --> RESP["Resposta fundamentada ao analista"]
 ```
 
 Para detalhes completos da arquitetura, consulte [`docs/SYSTEM_CARD.md`](docs/SYSTEM_CARD.md).
