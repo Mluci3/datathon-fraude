@@ -108,8 +108,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 ## Pendências e Ajustes Futuros
 
 - [X] Rodar RAGAS novamente após indexação da knowledge base — atualizar métricas no SYSTEM_CARD seção 6.3
-- [ ] Preencher tabela de fairness por `merchant_category` no MODEL_CARD
-- [ ] Completar README com instruções de como subir os serviços
-- [ ] Commitar todos os documentos de governança no repositório
-- [ ] Commitar ajustes no `app.py` (ContextCollectorCallback) e `tools.py` (knowledge base)
-- [ ] Commitar `data/knowledge_base/knowledge_base.json` e função `index_knowledge_base` no `rag_pipeline.py`
+- [X] Preencher tabela de fairness por `merchant_category` no MODEL_CARD
+- [X] Completar README com instruções de como subir os serviços
+- [X] Commitar todos os documentos de governança no repositório
+- [X] Commitar ajustes no `app.py` (ContextCollectorCallback) e `tools.py` (knowledge base)
+- [X] Commitar `data/knowledge_base/knowledge_base.json` e função `index_knowledge_base` no `rag_pipeline.py`

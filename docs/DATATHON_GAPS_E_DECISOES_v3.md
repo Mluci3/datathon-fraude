@@ -249,14 +249,16 @@ Os itens abaixo foram implementados além do escopo mínimo planejado, fortalece
 
 ## 7. Pendências para Entrega (até 30/04/2026)
 
+> ✅ Todos os itens abaixo foram concluídos (checklist atualizado em 2026-10-03). A coluna "Prazo" registra o prazo original planejado.
+
 | Item | Status | Prazo |
 |---|---|---|
-| `evaluation/llm_judge.py` | ⏳ Pendente | 22/04 |
-| RAGAS novo run (com knowledge base) | ⏳ Pendente | 22/04 |
-| `src/monitoring/drift.py` com Evidently | ⏳ Pendente | 23/04 |
-| README com instruções de serviços | ⏳ Pendente | 24/04 |
-| Atualizar SYSTEM_CARD seção 6.3 com métricas RAGAS reais | ⏳ Pendente | após RAGAS |
-| Tabela fairness por `merchant_category` no MODEL_CARD | ⏳ Pendente | 24/04 |
+| `evaluation/llm_judge.py` | ✅ Concluído | 22/04 |
+| RAGAS novo run (com knowledge base) | ✅ Concluído | 22/04 |
+| `src/monitoring/drift.py` com Evidently | ✅ Concluído | 23/04 |
+| README com instruções de serviços | ✅ Concluído | 24/04 |
+| Atualizar SYSTEM_CARD seção 6.3 com métricas RAGAS reais | ✅ Concluído | após RAGAS |
+| Tabela fairness por `merchant_category` no MODEL_CARD | ✅ Concluído | 24/04 |
 
 ---
 

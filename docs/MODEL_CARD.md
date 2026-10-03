@@ -128,6 +128,8 @@ O critério adotado é que o **Recall não deve variar significativamente entre 
 
 **Conclusão:** Recall 1.0 em todas as 6 categorias de merchant — o modelo não apresenta disparidade de desempenho entre segmentos. A categoria `educacao` apresenta Precision ligeiramente menor (0.9231) indicando alguns falsos positivos nesse segmento, sem impacto no Recall. Este resultado é consistente com o Recall global do modelo (1.0) e confirma ausência de viés por categoria de estabelecimento.
 
+**Ressalva (dados sintéticos):** como o recall global é 1.0 em dados sintéticos de alta separabilidade (ver seção 6 — Limitações), o recall por segmento também é 1.0, o que torna esta análise de disparidade pouco discriminativa. Em dados reais, com recall < 1.0, a fairness deve ser reavaliada por segmento, incluindo precision e taxa de falsos positivos por categoria.
+
 ---
 
 ## 6. Limitações Conhecidas

@@ -50,7 +50,7 @@ def train_xgboost(df: pd.DataFrame) -> str:
         mlflow.set_tag("model_type", "classification")
         mlflow.set_tag("owner", "datathon-6mlet")
         mlflow.set_tag("risk_level", "high")
-        mlflow.set_tag("fairness_checked", "false")
+        mlflow.set_tag("fairness_checked", "true")  # analisada post-hoc — ver docs/MODEL_CARD.md seção 5
         mlflow.set_tag("phase", "datathon-fase05")
         mlflow.set_tag("dataset", "enriched-v2")
 
