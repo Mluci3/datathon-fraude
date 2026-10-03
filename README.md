@@ -43,7 +43,7 @@ Este projeto foi desenvolvido individualmente sem o enunciado formal da empresa 
 | Context Precision | 0.818 | ✅ |
 | Answer Correctness | 0.651 | ⚠️ |
 
-### LLM-as-Judge (8 categorias)
+### LLM-as-Judge (3 critérios)
 
 | Critério | Nota |
 |---|---|
